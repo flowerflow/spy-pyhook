@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 import time
 import win32api
-import win32con
+import win32con 
 def guanji():
     print ("run")
     win32api.keybd_event(91, 0, 0, 0)
