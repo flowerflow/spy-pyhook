@@ -23,7 +23,12 @@ def getfile(path,name):
 	#获取文件
 def boomwenjian(path):
 	#爆破并获得指定目录下文件
-
+def jietu():
+	pass
+	#获取截图
+def cmd():
+	pass
+	#cmd命令
 #键盘事件处理，并且发送
 def onKeyboardEvent(event):
     global s
