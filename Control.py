@@ -6,26 +6,60 @@ from PyQt5.QtWidgets import QWidget, QApplication, QLabel,  QTableWidget,QHBoxLa
 from PyQt5.QtGui import QFont,QColor,QBrush,QPixmap
 from PyQt5 import QtCore, QtGui, QtWidgets,Qt
 import sys
-
-class host():
+import threading
+import time
+class host(threading.Thread):
     def __init__(self):
+        super(host, self).__init__()
+        self.pc=[]
+    def setbaseIP(self,ip,port):
+        self.messagein = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # 定义socket类型，网络通信，TCP
+        self.messagein.bind((ip, port))  # 套接字绑定的IP与端口
+        self.messagein.listen(5)
+    def run(self):
+        while 1:
+            conn, addr = self.messagein.accept()
+            print(addr)
+            a=PCmessage(soc=conn,ip=addr)
+            self.pc.append(a)
+            print(self.pc.index(a))
+            a.setnum(self.pc.index(a))
+            a.start()
+class PCmessage(threading.Thread):
+    def __init__(self,soc,ip):
+        super(PCmessage, self).__init__()
+        self.soc=soc
+        self.ip=ip
+        pass
+    def setnum(self,num):
+        self.num=num
+    def run(self):
+        try:
+            while 1:
+                data = self.soc.recv(1024)
+                print(str(data),self.ip)
 
-
+        except Exception:
+            pass
 
 class Ui_MainWindow(object):
     def __init__(self):
-        self.HOST = '127.0.0.1'
+        self.onlinepcnum=0
+        self.HOST = '101.76.240.59'
         self.PORTfileget = 10001
         self.PORTfilesend = 10002
         self.PORTmessageget = 10003
-        self.PORTmessagesend = 10001
-
+        self.PORTmessagesend = 10004
+        self.talk=host()
+        self.talk.setbaseIP(ip=self.HOST,port=self.PORTmessageget)
+        self.talk.start()
+        '''
         self.messagein = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # 定义socket类型，网络通信，TCP
-        self.messagein.bind((self.HOST, self.messagein))  # 套接字绑定的IP与端口
+        self.messagein.bind((self.HOST, self.PORTmessageget))  # 套接字绑定的IP与端口
         self.messagein.listen(5)
 
         self.messageout = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # 定义socket类型，网络通信，TCP
-        self.messageout.bind((self.HOST, self.messageout))  # 套接字绑定的IP与端口
+        self.messageout.bind((self.HOST, self.PORTmessagesend))  # 套接字绑定的IP与端口
         self.messageout.listen(5)
 
         self.filein = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # 定义socket类型，网络通信，TCP
@@ -35,7 +69,7 @@ class Ui_MainWindow(object):
         self.fileout= socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # 定义socket类型，网络通信，TCP
         self.fileout.bind((self.HOST, self.PORTfilesend))  # 套接字绑定的IP与端口
         self.fileout.listen(5)
-        pass
+        '''
     def setupUi(self, MainWindow):
         #设置字体
         hostname = socket.gethostname()
@@ -121,17 +155,32 @@ class Ui_MainWindow(object):
         self.pushButton.setGeometry(QtCore.QRect(560, 540, 75, 23))
         self.pushButton.setObjectName("pushButton")
         self.pushButton.setText("Go")
+        self.pushButton.clicked.connect(self.tijiaocmd)#绑定事件
         #############需要添加提交事件#####################
         MainWindow.setCentralWidget(self.centralWidget)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+    def xiugaizaixianshu(self,i):
+        ##修改在线数
+        self.onlinepcnum +=i
+        self.onlinenum.setText(str(self.onlinepcnum))
+
+
     def shuangxininfo(self):
         #这里需要刷新控制台信息
+        #
+        #
+        #
         pass
     def   tijiaocmd(self,n):
         #这里需要提交命令
+        #
         pass
-    def threadall(self):
-        #这里把所有监听线程全开了
+    def threadmessagein(self,soc):
+        while 1:
+            conn, addr = s.accept()
+
+
+            #这里把所有监听线程全开了
         pass
 
     def shubiaoyoujian(self,index):
